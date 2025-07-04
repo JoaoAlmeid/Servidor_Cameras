@@ -1,0 +1,41 @@
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+generator client {
+  provider = "prisma-client-js"
+  output   = "../src/generated/prisma"
+}
+
+model Admin {
+  adminId     String      @id @default(uuid())
+  nome        String?
+  email       String      @unique @db.VarChar(255)
+  senha       String      @db.VarChar(100)
+  nivel       NivelAdmin  @default(SIMPLES)
+
+  refreshToken  String?  @db.Text
+
+  criadoEm     DateTime @default(now())
+  atualizadoEm DateTime @updatedAt
+}
+
+model Camera {
+  cameraId    String  @id @default(cuid())
+  url         String  @unique
+  ativo       Boolean @default(true)
+  nome        String  @unique
+  localizacao String
+  latitude    Float
+  longitude   Float
+
+  criadoEm     DateTime @default(now())
+  atualizadoEm DateTime @updatedAt
+}
+
+// Enums 
+enum NivelAdmin {
+  SUPER
+  SIMPLES
+}
