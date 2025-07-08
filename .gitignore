@@ -1,5 +1,6 @@
 node_modules
 /src/generated/prisma
+ffmpeg
 
 # Build output
 dist/
@@ -9,6 +10,3 @@ build/
 .env
 .env.local
 .env.*.local
-
-# ffmpeg executáveis grandes
-ffmpeg/bin/

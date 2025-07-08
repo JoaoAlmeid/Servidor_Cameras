@@ -1,7 +1,7 @@
 module.exports = {
   apps: [
     {
-      name: 'player-camera',
+      name: 'backend-camera',
       script: './dist/server.cjs',
       instances: 1,
       exec_mode: 'fork',
