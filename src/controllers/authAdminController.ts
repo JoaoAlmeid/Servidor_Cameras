@@ -15,7 +15,7 @@ export class AuthAdminController {
       const cookies = gerarCookiesDeAutenticacao(resultado.token, resultado.refreshToken)
       res.setHeader('Set-Cookie', cookies);
 
-      res.status(200).json({ admin: resultado.admin });
+      res.status(200).json(resultado);
       return;
     } catch (error) {
       if (error instanceof UnauthorizedError) {

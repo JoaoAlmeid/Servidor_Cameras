@@ -3,18 +3,18 @@ import { serialize } from 'cookie';
 export function gerarCookiesDeAutenticacao(token: string, refreshToken: string) {
   const tokenCookie = serialize('token', token, {
     httpOnly: true,
-    secure: process.env.NODE_ENV === 'production',
+    secure: true,
     maxAge: 60 * 60 * 24,
     path: '/',
-    sameSite: 'lax',
+    sameSite: 'none',
   });
 
   const refreshTokenCookie = serialize('refreshToken', refreshToken, {
     httpOnly: true,
-    secure: process.env.NODE_ENV === 'production',
+    secure: true,
     maxAge: 60 * 60 * 24 * 7,
     path: '/',
-    sameSite: 'lax',
+    sameSite: 'none',
   });
 
   return [tokenCookie, refreshTokenCookie];
