@@ -34,12 +34,11 @@ if (process.env.NODE_ENV !== 'production') {
 }
 
 // Limitação de requisição (anti-DDOS)
-const limiter = rateLimit({
+export const limiter = rateLimit({
     windowMs: 15 * 60 * 1000, // 15 minutos
     max: 100, // 100 requisições por ip
     message: 'Muitas requisições - Tente novamente mais tarde.'
 });
-app.use(limiter);
 
 // Body parsers
 app.use(express.json({ limit: '2mb' }));
