@@ -47,7 +47,7 @@ app.use(express.urlencoded({ extended: true }));
 
 // CORS
 app.use(cors({
-    origin: process.env.FRONTEND_URL?.split(',') || [],
+    origin: process.env.FRONTEND_URL || 'https://camera.ccomfm.com.br',
     methods: ['GET', 'POST', 'PUT', 'DELETE', 'PATCH'],
     credentials: true,
 }));
