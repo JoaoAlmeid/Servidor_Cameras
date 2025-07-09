@@ -1,11 +1,10 @@
 import { Router } from 'express';
 import { CameraController } from '../controllers/cameraController';
 import { authenticateJWT } from '../middlewares/authenticate';
-import { limiter } from '../app';
 
 const CameraRouter = Router();
 
-CameraRouter.post('/criar', limiter, CameraController.criar);
+CameraRouter.post('/criar', CameraController.criar);
 CameraRouter.put('/atualizar/:id', authenticateJWT, CameraController.atualizar);
 CameraRouter.patch('/status/:id', authenticateJWT, CameraController.alterarStatus);
 CameraRouter.delete('/deletar/:id', authenticateJWT, CameraController.deletar);

@@ -34,7 +34,7 @@ if (process.env.NODE_ENV !== 'production') {
 }
 
 // Limitação de requisição (anti-DDOS)
-export const limiter = rateLimit({
+const limiter = rateLimit({
     windowMs: 15 * 60 * 1000, // 15 minutos
     max: 100, // 100 requisições por ip
     message: 'Muitas requisições - Tente novamente mais tarde.'
@@ -52,7 +52,7 @@ app.use(cors({
 }));
 
 // Rotas
-app.use('/admin', AdminRouter);
+app.use('/admin', limiter, AdminRouter);
 app.use('/camera', CameraRouter);
 app.use('/transmissao', TransmissaoRouter);
 
