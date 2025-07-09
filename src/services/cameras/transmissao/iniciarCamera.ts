@@ -50,7 +50,7 @@ export async function iniciarCamera(camera: Camera): Promise<void> {
       .videoCodec('libx264')
       .audioCodec('aac')
       .addOption('-preset', 'veryfast')
-      .outputOptions(['-f hls', '-hls_time 4', '-hls_list_size 5', '-hls_flags delete_segments'])
+      .outputOptions(['-f hls', '-hls_time 5', '-hls_list_size 15', '-hls_flags delete_segments'])
       .output(playlistPath)
       .on('start', (cmd) => {
         console.log(`🚀 FFmpeg iniciado para câmera ${camera.cameraId}`);
@@ -67,14 +67,23 @@ export async function iniciarCamera(camera: Camera): Promise<void> {
       .on('error', (err) => {
         console.error(`❌ Erro na câmera ${camera.cameraId}: ${err.message}`);
         delete processos[camera.cameraId];
+        if (processos[camera.cameraId]) {
+          console.log(`🔁 Já rodando`);
+          return;
+        }
         reiniciar();
       });
 
+    const reiniciandoCameras = new Set<string>();
+
     function reiniciar() {
+      if (reiniciandoCameras.has(camera.cameraId)) return;
+
+      reiniciandoCameras.add(camera.cameraId);
       setTimeout(() => {
-        console.log(`🔁 Reiniciando câmera ${camera.cameraId}`);
+        reiniciandoCameras.delete(camera.cameraId);
         iniciarCamera(camera);
-      }, 2000);
+      }, 10000);
     }
 
     comando.run();
