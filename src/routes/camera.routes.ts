@@ -6,7 +6,7 @@ import { limiter } from '../app';
 const CameraRouter = Router();
 
 CameraRouter.post('/criar', limiter, CameraController.criar);
-CameraRouter.put('/atualizar/:id', limiter, authenticateJWT, CameraController.atualizar);
+CameraRouter.put('/atualizar/:id', authenticateJWT, CameraController.atualizar);
 CameraRouter.patch('/status/:id', authenticateJWT, CameraController.alterarStatus);
 CameraRouter.delete('/deletar/:id', authenticateJWT, CameraController.deletar);
 CameraRouter.get('/buscar/id/:id', CameraController.buscarPorId);
