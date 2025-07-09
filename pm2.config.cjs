@@ -4,7 +4,7 @@ module.exports = {
       name: 'backend-camera',
       script: './dist/server.cjs',
       instances: 1,
-      exec_mode: 'fork',
+      exec_mode: 'cluster',
       autorestart: true,
       watch: false,
       max_memory_restart: '300M',
