@@ -23,3 +23,8 @@ export const alterarSenhaSchema = z.object({
 export const esqueciSenhaSchema = z.object({
   email: z.string().email(),
 });
+
+export const resetarSenhaSchema = z.object({
+  token: z.string().min(10),
+  novaSenha: z.string().min(6, 'A senha deve ter pelo menos 6 caracteres'),
+})

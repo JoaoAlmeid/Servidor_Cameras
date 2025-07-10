@@ -1,9 +1,12 @@
 import prisma from "../../../lib/prisma";
 import bcrypt from 'bcryptjs';
 import jwt from 'jsonwebtoken';
-import { alterarSenhaSchema, esqueciSenhaSchema, loginSchema } from "./auth.schema";
+import { alterarSenhaSchema, esqueciSenhaSchema, loginSchema, resetarSenhaSchema } from "./auth.schema";
 import { gerarAccessToken, gerarRefreshToken } from "../../../lib/gerarToken";
 import { UnauthorizedError } from "../../../err/UnauthorizedError";
+import { randomUUID } from "crypto";
+import { addMinutes } from 'date-fns';
+import { enviarEmail } from "../../../lib/email";
 
 export class AuthAdminService {
     constructor(private readonly prismaClient = prisma) {}
@@ -80,17 +83,70 @@ export class AuthAdminService {
     
         const admin = await this.prismaClient.admin.findUnique({ where: { email } });
         if (!admin) throw new Error('Administrador não encontrado');
+
+        const token = randomUUID();
+        const expiracao = addMinutes(new Date(), 15);
+
+        await this.prismaClient.senhaTokenRecuperacao.create({
+            data: {
+                email,
+                token,
+                expiracao,
+            },
+        });
+
+        const link = `${process.env.FRONTEND_URL}/recuperar-senha?token=${token}`;
     
-        // Geração de código simples (substitua por token seguro e e-mail real depois)
-        const codigoRecuperacao = Math.floor(100000 + Math.random() * 900000).toString();
-    
-        // Simulando envio e armazenando token num log (ou tabela futura)
-        console.log(`Código de recuperação para ${email}: ${codigoRecuperacao}`);
+        await enviarEmail({
+            to: email,
+            subject: 'Recuperação de senha',
+            html: `
+                <p>Olá, ${admin.nome || 'Administrador'}</p>
+                <p>Você solicitou a recuperação de senha. Clique no link abaixo:</p>
+                <p><a href="${link}" target="_blank">Recuperar Senha</a></p>
+                <br/>
+                <p>!!!!!</p>
+                <p>Esse link expira em 15 minutos</p>
+            `
+        })
     
         return {
-          message: 'Código de recuperação enviado para o e-mail (simulado)',
-          codigo: codigoRecuperacao, // Remova isso em produção
+          message: 'E-mail de recuperação enviado com sucesso',
         };
+    }
+
+    async resetarSenha(input: unknown) {
+        try {
+            const { token, novaSenha } = resetarSenhaSchema.parse(input);
+    
+            const registroToken = await this.prismaClient.senhaTokenRecuperacao.findUnique({
+                where: { token },
+            });
+    
+            if (!registroToken) {
+                throw new Error('Token inválido');
+            }
+    
+            if (registroToken.expiracao < new Date()) {
+                // Apaga o token expirado
+                await this.prismaClient.senhaTokenRecuperacao.delete({ where: { token } });
+                throw new Error('Token expirado');
+            }
+    
+            // Atualiza a senha
+            const hash = await bcrypt.hash(novaSenha, 10);
+            await this.prismaClient.admin.update({
+                where: { email: registroToken.email },
+                data: { senha: hash },
+            });
+    
+            // Apaga o token usado
+            await this.prismaClient.senhaTokenRecuperacao.delete({ where: { token } });
+    
+            return { message: 'Senha atualizada com sucesso' };
+        } catch (error) {
+            throw new Error('Erro ao atualizar senha');
+        }
     }
 
     async refresh(token: string) {

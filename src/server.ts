@@ -1,9 +1,10 @@
 import app from './app';
 import prisma from './lib/prisma';
 import { iniciarCamera } from './services/cameras/transmissao/iniciarCamera';
+import { iniciarLimpeza } from './utils/limparTokensExpirados';
 
 const port = process.env.PORT || '4010';
-const url_backend = process.env.BACKEND_URL || 'http://localhost';
+const url_backend = process.env.BACKEND_URL;
 
 async function iniciarCamerasAtivas() {
   try {
@@ -28,6 +29,7 @@ async function iniciarServidor() {
     app.listen(Number(port), async () => {
       console.log(`🚀 Servidor rodando em ${url_backend}:${port}`);
       await iniciarCamerasAtivas()
+      iniciarLimpeza()
     });
   } catch (err) {
     console.error('❌ Erro ao iniciar o servidor: ', err);

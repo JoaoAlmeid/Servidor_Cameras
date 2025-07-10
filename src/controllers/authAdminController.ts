@@ -102,10 +102,24 @@ export class AuthAdminController {
   static async esqueciSenha(req: Request, res: Response): Promise<void> {
     try {
       const resultado = await authAdminService.esqueciSenha(req.body);
-      res.status(200).json(resultado);
+      res.status(200).json({
+        sucesso: true,
+        mensagem: resultado.message
+      });
     } catch (error) {
       res.status(400).json({
         erro: error instanceof Error ? error.message : 'Erro ao solicitar recuperação de senha',
+      });
+    }
+  }
+
+  static async resetarSenha(req: Request, res: Response): Promise<void> {
+    try {
+      const resultado = await authAdminService.resetarSenha(req.body);
+      res.status(200).json(resultado);
+    } catch (error) {
+      res.status(400).json({
+        erro: error instanceof Error ? error.message : 'Erro ao redefinir a senha',
       });
     }
   }

@@ -26,12 +26,20 @@ model Camera {
   url         String  @unique
   ativo       Boolean @default(true)
   nome        String  @unique
-  localizacao String
+  localizacao String?
   latitude    Float
   longitude   Float
 
   criadoEm     DateTime @default(now())
   atualizadoEm DateTime @updatedAt
+}
+
+model SenhaTokenRecuperacao {
+  id        String   @id @default(uuid())
+  token     String   @unique
+  email     String
+  expiracao DateTime
+  criadoEm  DateTime @default(now())
 }
 
 // Enums 

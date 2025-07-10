@@ -16,6 +16,7 @@ AdminRouter.post('/auth/login', AuthAdminController.login);
 AdminRouter.post('/auth/sair', AuthAdminController.logout);
 AdminRouter.put('/auth/alterar-senha', AuthAdminController.alterarSenha);
 AdminRouter.post('/auth/esqueci-senha', AuthAdminController.esqueciSenha);
+AdminRouter.post('/auth/resetar-senha', AuthAdminController.resetarSenha);
 AdminRouter.post('/auth/verificar-token', AuthAdminController.verificarToken);
 AdminRouter.post('/auth/atualizar-token', AuthAdminController.refresh);
 
