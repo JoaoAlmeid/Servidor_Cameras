@@ -1,9 +1,18 @@
-import prisma from '../src/lib/prisma'
-import bcrypt from 'bcryptjs'
+import prisma from '../src/lib/prisma';
+import bcrypt from 'bcryptjs';
 
 async function main() {
-  const email = 'superadmin@admin.com'
-  const senha = 'admin123'
+  const email = process.env.SUPER_EMAIL || 'admin@admin.com';
+  const senha = process.env.SUPER_SENHA || 'admin123';
+  const nome_admin = process.env.SUPER_NOME;
+  
+
+  if (!email && !senha) {
+    console.error('E-mail e senha do admin preciso ser passado pela variavel')
+  }
+  if (!nome_admin) {
+    console.error('Nome do admin ausente na variavel')
+  }
 
   const existe = await prisma.admin.findUnique({
     where: { email }
@@ -19,7 +28,7 @@ async function main() {
   const admin = await prisma.admin.create({
     data: {
       email,
-      nome: 'Admin',
+      nome: nome_admin,
       senha: senhaCriptografada,
       nivel: 'SUPER'
     }
