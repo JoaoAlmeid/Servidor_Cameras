@@ -73,16 +73,11 @@ export class AuthAdminController {
 
   static async logout(req: Request, res: Response): Promise<void> {
     try {
-      res.clearCookie('token', {
-        httpOnly: true,
-        secure: true,
-        sameSite: 'none',
-        path: '/',
-      })
-
+      res.cookie('token', "", { maxAge: 0 })
       res.status(200).json({ message: 'Logout realizado com sucesso' })
     } catch (error) {
-      res.status(400).json({
+      console.error("Erro no controller de logout", error)
+      res.status(500).json({
         erro: error instanceof Error ? error.message : 'Erro ao fazer logout',
       });
     }
