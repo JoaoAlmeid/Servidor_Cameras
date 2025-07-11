@@ -73,17 +73,8 @@ export class AuthAdminController {
 
   static async logout(req: Request, res: Response): Promise<void> {
     try {
-      const cookieOptions = {
-        httpOnly: true,
-        secure: true,
-        sameSite: 'none' as const,
-        path: '/',
-        domain: '.ccomfm.com.br',
-        maxAge: 0,
-      };
-
-      res.cookie('token', cookieOptions);
-      res.cookie('refreshToken', cookieOptions);
+      res.clearCookie('token');
+      res.clearCookie('refreshToken');
 
       res.status(200).json({ message: 'Logout realizado com sucesso' })
     } catch (error) {
